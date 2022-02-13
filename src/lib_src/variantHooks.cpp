@@ -33,9 +33,9 @@
 #include <Arduino.h>
 
 /* FreeRTOS includes. */
-#include "Arduino_FreeRTOS.h"
-#include "task.h"
-#include "timers.h"
+#include "lib_includes/Arduino_FreeRTOS.h"
+#include "lib_includes/task.h"
+#include "lib_includes/timers.h"
 
 extern void setup(void);
 extern void loop(void);

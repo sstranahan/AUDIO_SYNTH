@@ -1,5 +1,5 @@
-#include <Arduino_FreeRTOS.h>
-#include <semphr.h>  // add the FreeRTOS functions for Semaphores (or Flags).
+#include <lib_includes/Arduino_FreeRTOS.h>
+#include <lib_includes/semphr.h>  // add the FreeRTOS functions for Semaphores (or Flags).
 
 // Declare a mutex Semaphore Handle which we will use to manage the Serial Port.
 // It will be used to ensure only one Task is accessing this resource at any time.

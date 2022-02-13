@@ -18,7 +18,7 @@
  */
 
 // include stack library header.
-#include <StackArray.h>
+#include <lib_includes/StackArray.h>
 
 // declare a string message.
 const String msg = "Happy Hacking!";

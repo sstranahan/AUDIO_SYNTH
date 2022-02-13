@@ -26,48 +26,16 @@
 /////////////////////////////////////////////////////////////////////////////////////////////
 #include <Arduino.h>
 #include <stdlib.h>
-#include <StackArray.h>
-#include "I2C.h"
-#include "IQS5xx.h"
+#include <lib_includes/StackArray.h>
+#include "lib_includes/I2C.h"
+#include "lib_includes/IQS5xx.h"
 #include "defs.h"
-#include <Adafruit_MCP4725.h>
+#include <lib_includes/Adafruit_MCP4725.h>
 
 // RTOS INCLUDES ////////////////////////////////////////////////////////////////////////////
-#include <Arduino_FreeRTOS.h>
-#include <semphr.h>  // add the FreeRTOS functions for Semaphores (or Flags).
+#include <lib_includes/Arduino_FreeRTOS.h>
+#include <lib_includes/semphr.h>  // add the FreeRTOS functions for Semaphores (or Flags).
 /*******************************************************************************************/
-
-/////////////////////////////////////////////////////////////////////////////////////////////
-/////////////////////////////////// GLOBAL DEFINES //////////////////////////////////////////
-/////////////////////////////////////////////////////////////////////////////////////////////
-
-// Wave selection rotary switch pin assigns
-#define ws0 f5  // Not needed - maybe need to get a different rotary switch?
-
-#define octDwn 11
-#define octUp 12
-
-// Primary output signal
-#define speakerOutPin 13
-
-#define SQUARE_SEL  26   // Pin acting weird - going to ~3.3V when low, and back up to 4.8V when pressing key
-#define TRI_SEL_1   27
-#define SINE_SEL_1  28
-#define SINE_SEL_2  29
-#define SINE_SEL_3  30
-#define SINE_SEL_4  31
-#define SINE_SEL_5  32
-
-enum waveSelect_T {
-  SQUARE,
-  TRIANGLE,
-  SINE,
-};
-
-#define MCP4725_I2CADDR_DEFAULT (0x62) ///< Default i2c address
-
-/*******************************************************************************************/
-
 
 /////////////////////////////////////////////////////////////////////////////////////////////
 ////////////////////////////////// GLOBAL VARIABLES /////////////////////////////////////////
@@ -89,7 +57,7 @@ StackArray<unsigned int> btnStack;    // Stack to keep track of order of button 
 
 bool OUT_STATE = false;               // Drives hi/low logic levels for square wave output
 // to speaker module
-waveSelect_T waveSelect;
+
 
 unsigned int octaveIdx = 2;           // Default octave is middle octave
 unsigned int stackSize = 0;
@@ -102,8 +70,7 @@ uint16_t  ui16SnapStatus[15], ui16PrevSnap[15];
 uint16_t  xCoord;
 uint16_t  yCoord;
 
-// Adafruit_MCP4725 dac1;
-// Adafruit_MCP4725 dac2;
+
 
 TwoWire wire;
 
@@ -364,13 +331,13 @@ void TaskWaveSelect( void *pvParameters ) {
     switch (waveSelect) {
 
       case SQUARE :
-        digitalWrite(SQUARE_SEL, HIGH);
-        digitalWrite(TRI_SEL_1, LOW);
-        digitalWrite(SINE_SEL_1, LOW);
-        digitalWrite(SINE_SEL_2, LOW);
-        digitalWrite(SINE_SEL_3, LOW);
-        digitalWrite(SINE_SEL_4, LOW);
-        digitalWrite(SINE_SEL_5, LOW);
+        digitalWrite(OUT_SQUARE_SEL, HIGH);
+        digitalWrite(OUT_TRI_SEL_1, LOW);
+        digitalWrite(OUT_SINE_SEL_1, LOW);
+        digitalWrite(OUT_SINE_SEL_2, LOW);
+        digitalWrite(OUT_SINE_SEL_3, LOW);
+        digitalWrite(OUT_SINE_SEL_4, LOW);
+        digitalWrite(OUT_SINE_SEL_5, LOW);
         break;
 
       case TRIANGLE :
@@ -378,58 +345,58 @@ void TaskWaveSelect( void *pvParameters ) {
         switch (octaveIdx) {
 
           case 0 :
-            digitalWrite(SQUARE_SEL, LOW);
-            digitalWrite(SINE_SEL_1, LOW);
-            digitalWrite(SINE_SEL_2, LOW);
-            digitalWrite(SINE_SEL_3, LOW);
-            digitalWrite(SINE_SEL_4, LOW);
-            digitalWrite(SINE_SEL_5, LOW);
-            digitalWrite(TRI_SEL_1, HIGH);
+            digitalWrite(OUT_SQUARE_SEL, LOW);
+            digitalWrite(OUT_SINE_SEL_1, LOW);
+            digitalWrite(OUT_SINE_SEL_2, LOW);
+            digitalWrite(OUT_SINE_SEL_3, LOW);
+            digitalWrite(OUT_SINE_SEL_4, LOW);
+            digitalWrite(OUT_SINE_SEL_5, LOW);
+            digitalWrite(OUT_TRI_SEL_1, HIGH);
             break;
           case 1 :
-            digitalWrite(SQUARE_SEL, LOW);
-            digitalWrite(TRI_SEL_1, LOW);
-            digitalWrite(SINE_SEL_1, HIGH);
-            digitalWrite(SINE_SEL_2, LOW);
-            digitalWrite(SINE_SEL_3, LOW);
-            digitalWrite(SINE_SEL_4, LOW);
-            digitalWrite(SINE_SEL_5, LOW);
+            digitalWrite(OUT_SQUARE_SEL, LOW);
+            digitalWrite(OUT_TRI_SEL_1, LOW);
+            digitalWrite(OUT_SINE_SEL_1, HIGH);
+            digitalWrite(OUT_SINE_SEL_2, LOW);
+            digitalWrite(OUT_SINE_SEL_3, LOW);
+            digitalWrite(OUT_SINE_SEL_4, LOW);
+            digitalWrite(OUT_SINE_SEL_5, LOW);
             break;
           case 2 :
-            digitalWrite(SQUARE_SEL, LOW);
-            digitalWrite(TRI_SEL_1, LOW);
-            digitalWrite(SINE_SEL_1, LOW);
-            digitalWrite(SINE_SEL_2, HIGH);
-            digitalWrite(SINE_SEL_3, LOW);
-            digitalWrite(SINE_SEL_4, LOW);
-            digitalWrite(SINE_SEL_5, LOW);
+            digitalWrite(OUT_SQUARE_SEL, LOW);
+            digitalWrite(OUT_TRI_SEL_1, LOW);
+            digitalWrite(OUT_SINE_SEL_1, LOW);
+            digitalWrite(OUT_SINE_SEL_2, HIGH);
+            digitalWrite(OUT_SINE_SEL_3, LOW);
+            digitalWrite(OUT_SINE_SEL_4, LOW);
+            digitalWrite(OUT_SINE_SEL_5, LOW);
             break;
           case 3 :
-            digitalWrite(SQUARE_SEL, LOW);
-            digitalWrite(TRI_SEL_1, LOW);
-            digitalWrite(SINE_SEL_1, LOW);
-            digitalWrite(SINE_SEL_2, LOW);
-            digitalWrite(SINE_SEL_3, HIGH);
-            digitalWrite(SINE_SEL_4, LOW);
-            digitalWrite(SINE_SEL_5, LOW);
+            digitalWrite(OUT_SQUARE_SEL, LOW);
+            digitalWrite(OUT_TRI_SEL_1, LOW);
+            digitalWrite(OUT_SINE_SEL_1, LOW);
+            digitalWrite(OUT_SINE_SEL_2, LOW);
+            digitalWrite(OUT_SINE_SEL_3, HIGH);
+            digitalWrite(OUT_SINE_SEL_4, LOW);
+            digitalWrite(OUT_SINE_SEL_5, LOW);
             break;
           case 4 :
-            digitalWrite(SQUARE_SEL, LOW);
-            digitalWrite(TRI_SEL_1, LOW);
-            digitalWrite(SINE_SEL_1, LOW);
-            digitalWrite(SINE_SEL_2, LOW);
-            digitalWrite(SINE_SEL_3, LOW);
-            digitalWrite(SINE_SEL_4, HIGH);
-            digitalWrite(SINE_SEL_5, LOW);
+            digitalWrite(OUT_SQUARE_SEL, LOW);
+            digitalWrite(OUT_TRI_SEL_1, LOW);
+            digitalWrite(OUT_SINE_SEL_1, LOW);
+            digitalWrite(OUT_SINE_SEL_2, LOW);
+            digitalWrite(OUT_SINE_SEL_3, LOW);
+            digitalWrite(OUT_SINE_SEL_4, HIGH);
+            digitalWrite(OUT_SINE_SEL_5, LOW);
             break;
           default :
-            digitalWrite(SQUARE_SEL, HIGH);
-            digitalWrite(TRI_SEL_1, LOW);
-            digitalWrite(SINE_SEL_1, LOW);
-            digitalWrite(SINE_SEL_2, LOW);
-            digitalWrite(SINE_SEL_3, LOW);
-            digitalWrite(SINE_SEL_4, LOW);
-            digitalWrite(SINE_SEL_5, LOW);
+            digitalWrite(OUT_SQUARE_SEL, HIGH);
+            digitalWrite(OUT_TRI_SEL_1, LOW);
+            digitalWrite(OUT_SINE_SEL_1, LOW);
+            digitalWrite(OUT_SINE_SEL_2, LOW);
+            digitalWrite(OUT_SINE_SEL_3, LOW);
+            digitalWrite(OUT_SINE_SEL_4, LOW);
+            digitalWrite(OUT_SINE_SEL_5, LOW);
             break;
         }
         break;
@@ -438,70 +405,70 @@ void TaskWaveSelect( void *pvParameters ) {
         switch (octaveIdx) {
 
           case 0 :
-            digitalWrite(SQUARE_SEL, LOW);
-            digitalWrite(TRI_SEL_1, LOW);
-            digitalWrite(SINE_SEL_1, HIGH);
-            digitalWrite(SINE_SEL_2, LOW);
-            digitalWrite(SINE_SEL_3, LOW);
-            digitalWrite(SINE_SEL_4, LOW);
-            digitalWrite(SINE_SEL_5, LOW);
+            digitalWrite(OUT_SQUARE_SEL, LOW);
+            digitalWrite(OUT_TRI_SEL_1, LOW);
+            digitalWrite(OUT_SINE_SEL_1, HIGH);
+            digitalWrite(OUT_SINE_SEL_2, LOW);
+            digitalWrite(OUT_SINE_SEL_3, LOW);
+            digitalWrite(OUT_SINE_SEL_4, LOW);
+            digitalWrite(OUT_SINE_SEL_5, LOW);
             break;
           case 1 :
-            digitalWrite(SQUARE_SEL, LOW);
-            digitalWrite(TRI_SEL_1, LOW);
-            digitalWrite(SINE_SEL_1, LOW);
-            digitalWrite(SINE_SEL_2, HIGH);
-            digitalWrite(SINE_SEL_3, LOW);
-            digitalWrite(SINE_SEL_4, LOW);
-            digitalWrite(SINE_SEL_5, LOW);
+            digitalWrite(OUT_SQUARE_SEL, LOW);
+            digitalWrite(OUT_TRI_SEL_1, LOW);
+            digitalWrite(OUT_SINE_SEL_1, LOW);
+            digitalWrite(OUT_SINE_SEL_2, HIGH);
+            digitalWrite(OUT_SINE_SEL_3, LOW);
+            digitalWrite(OUT_SINE_SEL_4, LOW);
+            digitalWrite(OUT_SINE_SEL_5, LOW);
             break;
           case 2 :
-            digitalWrite(SQUARE_SEL, LOW);
-            digitalWrite(TRI_SEL_1, LOW);
-            digitalWrite(SINE_SEL_1, LOW);
-            digitalWrite(SINE_SEL_2, LOW);
-            digitalWrite(SINE_SEL_3, HIGH);
-            digitalWrite(SINE_SEL_4, LOW);
-            digitalWrite(SINE_SEL_5, LOW);
+            digitalWrite(OUT_SQUARE_SEL, LOW);
+            digitalWrite(OUT_TRI_SEL_1, LOW);
+            digitalWrite(OUT_SINE_SEL_1, LOW);
+            digitalWrite(OUT_SINE_SEL_2, LOW);
+            digitalWrite(OUT_SINE_SEL_3, HIGH);
+            digitalWrite(OUT_SINE_SEL_4, LOW);
+            digitalWrite(OUT_SINE_SEL_5, LOW);
             break;
           case 3 :
-            digitalWrite(SQUARE_SEL, LOW);
-            digitalWrite(TRI_SEL_1, LOW);
-            digitalWrite(SINE_SEL_1, LOW);
-            digitalWrite(SINE_SEL_2, LOW);
-            digitalWrite(SINE_SEL_3, LOW);
-            digitalWrite(SINE_SEL_4, HIGH);
-            digitalWrite(SINE_SEL_5, LOW);
+            digitalWrite(OUT_SQUARE_SEL, LOW);
+            digitalWrite(OUT_TRI_SEL_1, LOW);
+            digitalWrite(OUT_SINE_SEL_1, LOW);
+            digitalWrite(OUT_SINE_SEL_2, LOW);
+            digitalWrite(OUT_SINE_SEL_3, LOW);
+            digitalWrite(OUT_SINE_SEL_4, HIGH);
+            digitalWrite(OUT_SINE_SEL_5, LOW);
             break;
           case 4 :
-            digitalWrite(SQUARE_SEL, LOW);
-            digitalWrite(TRI_SEL_1, LOW);
-            digitalWrite(SINE_SEL_1, LOW);
-            digitalWrite(SINE_SEL_2, LOW);
-            digitalWrite(SINE_SEL_3, LOW);
-            digitalWrite(SINE_SEL_4, LOW);
-            digitalWrite(SINE_SEL_5, HIGH);
+            digitalWrite(OUT_SQUARE_SEL, LOW);
+            digitalWrite(OUT_TRI_SEL_1, LOW);
+            digitalWrite(OUT_SINE_SEL_1, LOW);
+            digitalWrite(OUT_SINE_SEL_2, LOW);
+            digitalWrite(OUT_SINE_SEL_3, LOW);
+            digitalWrite(OUT_SINE_SEL_4, LOW);
+            digitalWrite(OUT_SINE_SEL_5, HIGH);
             break;
           default :
-            digitalWrite(SQUARE_SEL, HIGH);
-            digitalWrite(TRI_SEL_1, LOW);
-            digitalWrite(SINE_SEL_1, LOW);
-            digitalWrite(SINE_SEL_2, LOW);
-            digitalWrite(SINE_SEL_3, LOW);
-            digitalWrite(SINE_SEL_4, LOW);
-            digitalWrite(SINE_SEL_5, LOW);
+            digitalWrite(OUT_SQUARE_SEL, HIGH);
+            digitalWrite(OUT_TRI_SEL_1, LOW);
+            digitalWrite(OUT_SINE_SEL_1, LOW);
+            digitalWrite(OUT_SINE_SEL_2, LOW);
+            digitalWrite(OUT_SINE_SEL_3, LOW);
+            digitalWrite(OUT_SINE_SEL_4, LOW);
+            digitalWrite(OUT_SINE_SEL_5, LOW);
             break;
         }
         break;
 
       default:
-        digitalWrite(SQUARE_SEL, HIGH);
-        digitalWrite(TRI_SEL_1, LOW);
-        digitalWrite(SINE_SEL_1, LOW);
-        digitalWrite(SINE_SEL_2, LOW);
-        digitalWrite(SINE_SEL_3, LOW);
-        digitalWrite(SINE_SEL_4, LOW);
-        digitalWrite(SINE_SEL_5, LOW);
+        digitalWrite(OUT_SQUARE_SEL, HIGH);
+        digitalWrite(OUT_TRI_SEL_1, LOW);
+        digitalWrite(OUT_SINE_SEL_1, LOW);
+        digitalWrite(OUT_SINE_SEL_2, LOW);
+        digitalWrite(OUT_SINE_SEL_3, LOW);
+        digitalWrite(OUT_SINE_SEL_4, LOW);
+        digitalWrite(OUT_SINE_SEL_5, LOW);
         break;
       
     }

@@ -1,7 +1,7 @@
 #include "Arduino.h"
 #include "defs.h"
-#include "I2C.h"
-#include "IQS5xx.h"
+#include "lib_includes/I2C.h"
+#include "lib_includes/IQS5xx.h"
 
 //
 // Local function prototypes

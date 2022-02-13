@@ -4,10 +4,10 @@
  */
 
 // Include Arduino FreeRTOS library
-#include <Arduino_FreeRTOS.h>
+#include <lib_includes/Arduino_FreeRTOS.h>
 
 // Include queue support
-#include <queue.h>
+#include <lib_includes/queue.h>
 
 // Define a Structure Array
 struct Arduino{
