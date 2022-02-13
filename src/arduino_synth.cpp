@@ -176,19 +176,14 @@ void setup() {
     pinMode(loopIdx, INPUT);
   }
 
-
   /* First we reset the control register to make sure we start with everything disabled */
   TCCR1A = 0;                       // Reset entire TCCR1A to 0
   TCCR1B = 0;                       // Reset entire TCCR1B to 0
 
   /*2. We set the prescalar to the desired value by changing the CS10 CS12 and CS12 bits. */
-  // TCCR1B |= B00000100;           // Set CS12 to 1 so we get prescalar 256
-  // TCCR1B = B00000001;            // Set CS12 to 1 so we get prescalar 1
-
   TCCR1B = B00000010;               // Prescaler = 8
 
-  TIMSK1 |= B00000000;              // Start with output compare disabled, will enable
-  // on button input
+  TIMSK1 |= B00000000;              // Start with output compare disabled, will enable on button input
 
   // Now set up Tasks to run independently.
   xTaskCreate(
@@ -345,15 +340,6 @@ void TaskProduceOutput( void *pvParameters __attribute__((unused)) )  // This is
     if (btnStack.isEmpty()) {
       TIMSK1 &= B00000000;   // Turn off timer system
     }
-
-
-    //    if ( xSemaphoreTake( xSerialSemaphore, ( TickType_t ) 5 ) == pdTRUE )
-    //    {
-    //      Serial.println("TASK 2");
-    //      xSemaphoreGive( xSerialSemaphore ); // Now free or "Give" the Serial Port for others.
-    //    }
-
-    vTaskDelay(1);  // one tick delay (15ms) in between reads for stability
   }
 }
 /*******************************************************************************************/
@@ -369,7 +355,6 @@ void TaskWaveSelect( void *pvParameters ) {
 
   for (;;)
   {
-
     for (i = 0; i < 3; i++) {
       if (digitalRead(i + 22) == LOW) {
         waveSelect = i;
@@ -386,8 +371,6 @@ void TaskWaveSelect( void *pvParameters ) {
         digitalWrite(SINE_SEL_3, LOW);
         digitalWrite(SINE_SEL_4, LOW);
         digitalWrite(SINE_SEL_5, LOW);
-        
-        Serial.println("Square");
         break;
 
       case TRIANGLE :
@@ -449,8 +432,6 @@ void TaskWaveSelect( void *pvParameters ) {
             digitalWrite(SINE_SEL_5, LOW);
             break;
         }
-        
-        Serial.println("Triangle");
         break;
       case SINE :
 
@@ -511,8 +492,6 @@ void TaskWaveSelect( void *pvParameters ) {
             digitalWrite(SINE_SEL_5, LOW);
             break;
         }
-        
-        Serial.println("Sine");
         break;
 
       default:
@@ -543,8 +522,6 @@ void TaskPollTrackpad( void *pvParameters ) {
   uint8_t   ui8TempData[30];
   int i = 0;
 
-  Serial.println("TP Task ...");
-
   for (;;) {
 
     // RDY_wait();
@@ -560,33 +537,9 @@ void TaskPollTrackpad( void *pvParameters ) {
 
     I2C_Read(GestureEvents0_adr, &Data_Buff[0], 44);
 
-    if ((Data_Buff[3] & SNAP_TOGGLE) != 0)
-    {
-      // If there was a change in a snap status, then read the snap status
-      // bytes additionally. Keep previous valus to identify a state change
-      //
-      I2C_Read(SnapStatus_adr, &ui8TempData[0], 30);
-      for (i = 0; i < 15; i++)
-      {
-        ui16PrevSnap[i] = ui16SnapStatus[i];
-        ui16SnapStatus[i] = ((uint16_t)(ui8TempData[2 * i]) << 8) +
-                            (uint16_t)ui8TempData[(2 * i) + 1];
-      }
-    }
-    //
-    // Terminate the communication session, so that the IQS5xx can continue
-    // with sensing and processing
-    //
     Close_Comms();
-    //
-    // Process received data
-    //
+
     Process_XY(&xCoord, &yCoord);
-    //
-    //  for (id = 0; id < 5; id++){
-    //    xCoord = ((Data_Buff[(7*id)+9] << 8) | (Data_Buff[(7*id)+10])); //9-16-23-30-37//10-17-24-31-38
-    //    yCoord = ((Data_Buff[(7*id)+11] << 8) | (Data_Buff[(7*id)+12])); //11-18-25-32-39//12-19-26-33-40
-    //  }
 
     Serial.print("X: ");
     Serial.print(xCoord);
@@ -609,20 +562,7 @@ ISR(TIMER1_COMPA_vect) {
   TCNT1 = 0;                        //First, set the timer back to 0 so it resets for next interrupt
   OUT_STATE = !OUT_STATE;           //Invert output state
 
-
   digitalWrite(outPin, OUT_STATE);  //Write new state to the output pin
-
-  //  digitalWrite (headphoneOutPin, OUT_STATE);
-  //
-  //  if (OUT_STATE == true){
-  //      if(digitalRead(headphoneDetect) == LOW){
-  //
-  //          outPin = headphoneOutPin;
-  //      }else{
-  //
-  //          outPin = speakerOutPin;
-  //      }
-  //  }
 }
 /*******************************************************************************************/
 
