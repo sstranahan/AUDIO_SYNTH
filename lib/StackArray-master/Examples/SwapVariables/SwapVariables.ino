@@ -18,7 +18,7 @@
  */
 
 // include stack library header.
-#include <StackArray.h>
+#include <lib_includes/StackArray.h>
 
 // declare two numbers.
 double a = 1.1;

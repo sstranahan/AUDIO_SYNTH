@@ -34,8 +34,8 @@
 #include <avr/sleep.h>
 #include <avr/wdt.h>
 
-#include "Arduino_FreeRTOS.h"
-#include "task.h"
+#include "lib_includes/Arduino_FreeRTOS.h"
+#include "lib_includes/task.h"
 
 /*-----------------------------------------------------------
  * Implementation of functions defined in portable.h for the AVR port.

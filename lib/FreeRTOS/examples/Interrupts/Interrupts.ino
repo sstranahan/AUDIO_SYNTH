@@ -5,10 +5,10 @@
 
 
 // Include Arduino FreeRTOS library
-#include <Arduino_FreeRTOS.h>
+#include <lib_includes/Arduino_FreeRTOS.h>
 
 // Include semaphore supoport
-#include <semphr.h>
+#include <lib_includes/semphr.h>
 
 /* 
  * Declaring a global variable of type SemaphoreHandle_t 

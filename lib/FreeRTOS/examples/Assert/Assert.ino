@@ -3,7 +3,7 @@
  * https://www.freertos.org/a00110.html#configASSERT
  */
 
-#include <Arduino_FreeRTOS.h>
+#include <lib_includes/Arduino_FreeRTOS.h>
 
 const boolean valueToAssert = true;
 

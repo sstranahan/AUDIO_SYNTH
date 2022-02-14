@@ -7,8 +7,8 @@
 #endif
 
 #include <inttypes.h>
-#include "I2C.h"
-#include "IQS5xx.h"
+#include "lib_includes/I2C.h"
+#include "lib_includes/IQS5xx.h"
 #include "defs.h"
 
 uint16_t  ui16Timeout = 100;  // Timeout on i2c in ms

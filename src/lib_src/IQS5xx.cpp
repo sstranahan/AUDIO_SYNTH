@@ -1,7 +1,7 @@
 #include "Arduino.h"
 #include "defs.h"
-#include "I2C.h"
-#include "IQS5xx.h"
+#include "lib_includes/I2C.h"
+#include "lib_includes/IQS5xx.h"
 
 //
 // Local function prototypes
@@ -149,8 +149,8 @@ void Process_XY(uint16_t* xCoord, uint16_t* yCoord)
   //
   if((ui8SystemFlags[0] & SHOW_RESET) != 0)
   {
-    Serial.println("RESET DETECTED");
-    IQS5xx_AcknowledgeReset(); 
+  //  Serial.println("RESET DETECTED");
+    IQS5xx_AcknowledgeReset();
     return;
   }
 
@@ -273,34 +273,34 @@ void Process_XY(uint16_t* xCoord, uint16_t* yCoord)
 //! \return None
 //                                                      
 //*****************************************************************************
-void Print_signed(int16_t i16Num)
-{
-  if(i16Num < (-99))
-  {
-    Serial.print(" ");
-  }
-  else if(i16Num < (-9))
-  {
-    Serial.print("  ");
-  }
-  else if(i16Num < 0)
-  {
-    Serial.print("   ");
-  }
-  else if(i16Num < 10)
-  {
-    Serial.print("    ");
-  }
-  else if(i16Num < 100)
-  {
-    Serial.print("   ");
-  }
-  else if(i16Num < 1000)
-  {
-    Serial.print("  ");
-  }
-  Serial.print(i16Num);
-}
+//void Print_signed(int16_t i16Num)
+//{
+//  if(i16Num < (-99))
+//  {
+//    Serial.print(" ");
+//  }
+//  else if(i16Num < (-9))
+//  {
+//    Serial.print("  ");
+//  }
+//  else if(i16Num < 0)
+//  {
+//    Serial.print("   ");
+//  }
+//  else if(i16Num < 10)
+//  {
+//    Serial.print("    ");
+//  }
+//  else if(i16Num < 100)
+//  {
+//    Serial.print("   ");
+//  }
+//  else if(i16Num < 1000)
+//  {
+//    Serial.print("  ");
+//  }
+//  Serial.print(i16Num);
+//}
 
 //*****************************************************************************
 //
@@ -314,31 +314,31 @@ void Print_signed(int16_t i16Num)
 //! \return None
 //                                                      
 //*****************************************************************************
-void Print_unsigned(uint16_t ui16Num)
-{
-  if(ui16Num < 10)
-  {
-    Serial.print("    ");
-  }
-  else if(ui16Num < 100)
-  {
-    Serial.print("   ");
-  }
-  else if(ui16Num < 1000)
-  {
-    Serial.print("  ");
-  }
-  else if(ui16Num < 10000)
-  {
-    Serial.print(" ");
-  }
-
-  if(ui16Num > 10000)
-  {
-    Serial.print("  xxx");
-  }
-  else
-  {
-    Serial.print(ui16Num);
-  }
-}
+//void Print_unsigned(uint16_t ui16Num)
+//{
+//  if(ui16Num < 10)
+//  {
+//    Serial.print("    ");
+//  }
+//  else if(ui16Num < 100)
+//  {
+//    Serial.print("   ");
+//  }
+//  else if(ui16Num < 1000)
+//  {
+//    Serial.print("  ");
+//  }
+//  else if(ui16Num < 10000)
+//  {
+//    Serial.print(" ");
+//  }
+//
+//  if(ui16Num > 10000)
+//  {
+//    Serial.print("  xxx");
+//  }
+//  else
+//  {
+//    Serial.print(ui16Num);
+//  }
+//}
