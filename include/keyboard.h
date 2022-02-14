@@ -31,6 +31,9 @@
 #define KEY_OCT_DWN    11
 #define KEY_OCT_UP     12
 
+// Primary output signal
+#define SPKR_OUT   13
+
 /*******************************************************************************************/
 
 /////////////////////////////////////////////////////////////////////////////////////////////
@@ -46,6 +49,10 @@ bool* getBtnFlags(void);
 void initKeyboard(void);
 
 void TaskScanKeyboard( void *pvParameters );
+
+void initOutput(void);
+
+void TaskProduceOutput( void *pvParameters );
 
 /*******************************************************************************************/
 #endif //AUDIO_SYNTH_KEYBOARD_H
