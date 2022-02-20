@@ -19,8 +19,8 @@
 /////////////////////////////////////////////////////////////////////////////////////////////
 
 #define IQS5xx_ADDR            0x74
-#define RDY_PIN               50
-#define RST_PIN               51
-#define END_WINDOW        (uint16_t)0xEEEE
+#define RDY_PIN                A14
+#define RST_PIN                A15
+#define END_WINDOW             (uint16_t)0xEEEE
 
 #endif

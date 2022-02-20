@@ -41,13 +41,16 @@ bool OUT_STATE = false;               // Drives hi/low logic levels for square w
 
 unsigned int KEY_INPUT_PINS[] = {KEY_IN_C0, KEY_IN_CS0, KEY_IN_D0, KEY_IN_DS0, KEY_IN_E0,
                                  KEY_IN_F0, KEY_IN_FS0, KEY_IN_G0, KEY_IN_GS0, KEY_IN_A0,
-                                 KEY_IN_AS0, KEY_IN_B0, KEY_IN_C1};
+                                 KEY_IN_AS0, KEY_IN_B0, KEY_IN_C1, KEY_IN_CS1, KEY_IN_D1,
+                                 KEY_IN_DS1, KEY_IN_E1, KEY_IN_F1, KEY_IN_FS1, KEY_IN_G1,
+                                 KEY_IN_GS1, KEY_IN_A1, KEY_IN_AS1, KEY_IN_B1, KEY_IN_C2};
 
 unsigned int KEY_OCTAVE_PINS[] = {KEY_OCT_DWN, KEY_OCT_UP};
 
 unsigned int octaveIdx = 2;           // Default octave is middle octave
 
-bool btnFlags[KEY_NUM_INPUT_KEYS] = {0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0}; // Flags prevent putting button on stack mult. times
+bool btnFlags[KEY_NUM_INPUT_KEYS] = {0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0,
+                                     0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0}; // Flags prevent putting button on stack mult. times
 
 StackArray<unsigned int> btnStack;    // Stack to keep track of order of button inputs
 
@@ -113,23 +116,23 @@ void TaskScanKeyboard( void *pvParameters __attribute__((unused)) )  // This is 
 
     while(TRUE) // A Task shall never return or exit.
     {
-        for (loopIdx = 36; loopIdx <= 48; loopIdx++) {
-            if (digitalRead(loopIdx) == LOW) {
-                if (btnFlags[loopIdx - 36] == 0) {         // If button already on stack, ignore
-                    btnFlags[loopIdx - 36] = 1;
-                    btnStack.push(loopIdx - 36);
+        for (loopIdx = 0; loopIdx < KEY_NUM_INPUT_KEYS; loopIdx++) {
+            if (digitalRead(KEY_INPUT_PINS[loopIdx]) == LOW) {
+                if (btnFlags[loopIdx] == 0) {         // If button already on stack, ignore
+                    btnFlags[loopIdx] = 1;
+                    btnStack.push(loopIdx);
                     Serial.print("Key in: ");
-                    Serial.print(loopIdx - 36);
+                    Serial.print(loopIdx);
                 }
                 delay(10);
             } else {
-                if (btnFlags[loopIdx - 36] == 1) {
-                    btnFlags[loopIdx - 36] = 0;
+                if (btnFlags[loopIdx] == 1) {
+                    btnFlags[loopIdx] = 0;
                 }
             }
         }
 
-        if (digitalRead(11) == LOW) {     // Octave shift down
+        if (digitalRead(KEY_OCT_DWN) == LOW) {     // Octave shift down
             if (octaveIdx == 0) {
                 octaveIdx = 4;
             } else {
@@ -138,7 +141,7 @@ void TaskScanKeyboard( void *pvParameters __attribute__((unused)) )  // This is 
             delay(10);                     // Debounce
         }
 
-        if (digitalRead(12) == LOW) {     // Octave shift up
+        if (digitalRead(KEY_OCT_UP) == LOW) {     // Octave shift up
             if (octaveIdx == 4) {
                 octaveIdx = 0;
             } else {
@@ -171,7 +174,7 @@ void TaskProduceOutput( void *pvParameters __attribute__((unused)) ) {
 
         unsigned int i;
 
-//        outBtnStack = getBtnStack();                 // Copy in note stack
+//        outBtnStack = getBtnStack();                 // Copy in note stack - dont need since global to this file
 //        btnFlagPtr = getBtnFlags();
 
 //        for (i = 0; i < KEY_NUM_INPUT_KEYS; i++) {   // Copy in flag array
@@ -184,7 +187,9 @@ void TaskProduceOutput( void *pvParameters __attribute__((unused)) ) {
         if (!btnStack.isEmpty()) {
             for (loopIdx = 0; loopIdx <= stackSize; loopIdx++) {
                 btnNumber = btnStack.peek();
-                if (digitalRead(btnNumber + 36) == HIGH) {
+                if (digitalRead(KEY_INPUT_PINS[btnNumber]) == HIGH) {
+                    Serial.println("Popping: ");
+                    Serial.println(loopIdx);
                     btnStack.pop();
                     btnFlags[btnNumber] = 0;
                     stackSize--;

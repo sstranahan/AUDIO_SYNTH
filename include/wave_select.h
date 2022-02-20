@@ -18,13 +18,13 @@
 #define IN_SINE_SEL     24
 
 // Wave select gate driver output pins
-#define OUT_SQUARE_SEL  26
-#define OUT_TRI_SEL_1   27
-#define OUT_SINE_SEL_1  28
-#define OUT_SINE_SEL_2  29
-#define OUT_SINE_SEL_3  30
-#define OUT_SINE_SEL_4  31
-#define OUT_SINE_SEL_5  32
+#define OUT_SQUARE_SEL  A0
+#define OUT_TRI_SEL_1   A1
+#define OUT_SINE_SEL_1  A2
+#define OUT_SINE_SEL_2  A3
+#define OUT_SINE_SEL_3  A4
+#define OUT_SINE_SEL_4  A5
+#define OUT_SINE_SEL_5  A6
 
 /*******************************************************************************************/
 
