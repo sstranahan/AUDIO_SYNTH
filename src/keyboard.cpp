@@ -28,12 +28,15 @@
 
 // OCCR Values for C4 - C5 octave - will achieve physically correct
 // frequencies for square wave output
-const unsigned int FREQ_LOOKUP[5][13] {
-        {15288, 14430, 13620, 12857, 12134, 11453, 10811, 10204, 9631, 9091, 8581, 8099, 7645},
-        {7645 , 7215 , 6811 , 6428 , 6068 , 5727 , 5405 , 5102 , 4816, 4545, 4290, 4049, 3822},
-        {3822 , 3608 , 3405 , 3214 , 3034 , 2863 , 2703 , 2551 , 2408, 2272, 2145, 2025, 1911},
-        {1911 , 1804 , 1703 , 1607 , 1517 , 1432 , 1351 , 1275 , 1204, 1136, 1073, 1012, 955},
-        {955  , 902  , 851  , 803  , 758  , 716  , 676  , 638  , 602 , 568 , 536 , 506 , 477}
+const unsigned int FREQ_LOOKUP[4][25] {
+        {15288, 14430, 13620, 12857, 12134, 11453, 10811, 10204, 9631, 9091, 8581, 8099,
+         7645 , 7215 , 6811 , 6428 , 6068 , 5727 , 5405 , 5102 , 4816, 4545, 4290, 4049, 3822},
+        {7645 , 7215 , 6811 , 6428 , 6068 , 5727 , 5405 , 5102 , 4816, 4545, 4290, 4049,
+         3822 , 3608 , 3405 , 3214 , 3034 , 2863 , 2703 , 2551 , 2408, 2272, 2145, 2025, 1911},
+        {3822 , 3608 , 3405 , 3214 , 3034 , 2863 , 2703 , 2551 , 2408, 2272, 2145, 2025,
+         1911 , 1804 , 1703 , 1607 , 1517 , 1432 , 1351 , 1275 , 1204, 1136, 1073, 1012, 955},
+        {1911 , 1804 , 1703 , 1607 , 1517 , 1432 , 1351 , 1275 , 1204, 1136, 1073, 1012,
+         955  , 902  , 851  , 803  , 758  , 716  , 676  , 638  , 602 , 568 , 536 , 506 , 477}
 };
 
 bool OUT_STATE = false;               // Drives hi/low logic levels for square wave
@@ -121,8 +124,6 @@ void TaskScanKeyboard( void *pvParameters __attribute__((unused)) )  // This is 
                 if (btnFlags[loopIdx] == 0) {         // If button already on stack, ignore
                     btnFlags[loopIdx] = 1;
                     btnStack.push(loopIdx);
-                    Serial.print("Key in: ");
-                    Serial.print(loopIdx);
                 }
                 delay(10);
             } else {
@@ -134,20 +135,20 @@ void TaskScanKeyboard( void *pvParameters __attribute__((unused)) )  // This is 
 
         if (digitalRead(KEY_OCT_DWN) == LOW) {     // Octave shift down
             if (octaveIdx == 0) {
-                octaveIdx = 4;
+                octaveIdx = 3;
             } else {
                 octaveIdx--;
             }
-            delay(10);                     // Debounce
+            vTaskDelay(1);                     // Debounce
         }
 
         if (digitalRead(KEY_OCT_UP) == LOW) {     // Octave shift up
-            if (octaveIdx == 4) {
+            if (octaveIdx == 3) {
                 octaveIdx = 0;
             } else {
                 octaveIdx++;
             }
-            delay(10);                     // Debounce
+            vTaskDelay(1);                    // Debounce
         }
 
         vTaskDelay(1);  // one tick delay (15ms) in between reads for stability
@@ -188,8 +189,6 @@ void TaskProduceOutput( void *pvParameters __attribute__((unused)) ) {
             for (loopIdx = 0; loopIdx <= stackSize; loopIdx++) {
                 btnNumber = btnStack.peek();
                 if (digitalRead(KEY_INPUT_PINS[btnNumber]) == HIGH) {
-                    Serial.println("Popping: ");
-                    Serial.println(loopIdx);
                     btnStack.pop();
                     btnFlags[btnNumber] = 0;
                     stackSize--;
