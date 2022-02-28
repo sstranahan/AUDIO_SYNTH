@@ -94,10 +94,10 @@ void TaskPollTrackpad( void *pvParameters ) {
 
         Process_XY(&xCoord, &yCoord);
 
-        Serial.print("X: ");
-        Serial.print(xCoord);
-        Serial.print("  Y: ");
-        Serial.println(yCoord);
+//        Serial.print("X: ");
+//        Serial.print(xCoord);
+//        Serial.print("  Y: ");
+//        Serial.println(yCoord);
 
         vTaskDelay(1);
     }
